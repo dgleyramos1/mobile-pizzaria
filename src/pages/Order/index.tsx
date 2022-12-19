@@ -4,13 +4,15 @@ import {
     StyleSheet,
     TouchableOpacity,
     TextInput,
-    Modal
+    Modal,
+    FlatList
 } from "react-native";
 import {useRoute, RouteProp, useNavigation} from '@react-navigation/native';
 import {Feather} from '@expo/vector-icons'
 import { api } from "../../services/api";
 import { useState, useEffect } from "react";
 import { ModalPicker } from "../../components/ModalPicker";
+import { LIstItem } from "../../components/ListItem";
 
 type RouteDetailParams = {
     Order: {
@@ -29,6 +31,15 @@ type ProductProps={
     id: string;
     name: string;
 }
+
+type ItemProps = {
+    id: string;
+    product_id: string;
+    name: string;
+    amount: string | number;
+}
+
+
 type OrderRouteProps = RouteProp<RouteDetailParams, 'Order'>
 
 
@@ -46,6 +57,8 @@ export default function Order(){
     const [modalProductVisible, setModalProductVisible] = useState(false)
 
     const [amount, setAmount] = useState('1')
+
+    const [items, setItems] = useState<ItemProps[]>([]);
 
     useEffect(() => {
         async function loadInfo(){
@@ -150,10 +163,21 @@ export default function Order(){
                     <Text style={styles.buttonText}>+</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity
+                    style={[styles.button, {opacity: items.length === 0 ? 0.3 : 1}]}
+                    disabled={items.length === 0}
+                >
                     <Text style={styles.buttonText}>Avançar</Text>
                 </TouchableOpacity>
             </View>
+
+            <FlatList
+                showsVerticalScrollIndicator={false}
+                style={{flex: 1, marginTop: 24}}
+                data={items}
+                keyExtractor={(item) => item.id}
+                renderItem={({item}) => <LIstItem data={item}/>}
+            />
 
             <Modal
                 transparent={true}
