@@ -8,7 +8,7 @@ import {
 import {useRoute, RouteProp, useNavigation} from '@react-navigation/native';
 import {Feather} from '@expo/vector-icons'
 import { api } from "../../services/api";
-import Routes from "../../routes";
+import { useState, useEffect } from "react";
 
 type RouteDetailParams = {
     Order: {
@@ -17,6 +17,11 @@ type RouteDetailParams = {
     }
 }
 
+
+type CategoryProps = {
+    id: string;
+    name: string
+}
 type OrderRouteProps = RouteProp<RouteDetailParams, 'Order'>
 
 
@@ -24,6 +29,22 @@ type OrderRouteProps = RouteProp<RouteDetailParams, 'Order'>
 export default function Order(){
     const route = useRoute<OrderRouteProps>()
     const navigation = useNavigation();
+
+    const [category, setCategory] = useState<CategoryProps[] | []>([])
+    const [categorySelected, setCategorySelected] = useState<CategoryProps>()
+
+    const [amount, setAmount] = useState('1')
+
+    useEffect(() => {
+        async function loadInfo(){
+            const response = await api.get('category')
+
+            setCategory(response.data)
+            setCategorySelected(response.data[0])
+        }
+
+        loadInfo();
+    })
 
     
     async function handleCloseOrder(){
@@ -54,7 +75,9 @@ export default function Order(){
             </View>
 
             <TouchableOpacity style={styles.input}>
-                <Text>Pizzas</Text>
+                <Text>
+                    {categorySelected?.name}
+                </Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.input}>
@@ -69,7 +92,8 @@ export default function Order(){
                     placeholder="1"
                     placeholderTextColor="#f0f0f0"
                     keyboardType="numeric"
-                    value="1"
+                    value={amount}
+                    onChangeText={setAmount}
                 />
             </View>
 
