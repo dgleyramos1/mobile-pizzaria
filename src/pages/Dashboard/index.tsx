@@ -21,7 +21,7 @@ export default function Dashboard(){
 
         navigation.navigate('Order', {
             number,
-            order_id
+            order_id: '21a56s1a32s1as5a1s3a21s6a5'
         })
 
     }
