@@ -24,6 +24,11 @@ export type CategoryProps = {
     id: string;
     name: string
 }
+
+type ProductProps={
+    id: string;
+    name: string;
+}
 type OrderRouteProps = RouteProp<RouteDetailParams, 'Order'>
 
 
@@ -33,8 +38,12 @@ export default function Order(){
     const navigation = useNavigation();
 
     const [category, setCategory] = useState<CategoryProps[] | []>([])
-    const [categorySelected, setCategorySelected] = useState<CategoryProps>()
+    const [categorySelected, setCategorySelected] = useState<CategoryProps | undefined>()
     const [modalCategoryVisible, setModalCategoryVIsible] = useState(false)
+
+    const [products, setProducts] = useState<ProductProps[] | []>([])
+    const [productSeleted, setProductSelected] = useState<ProductProps | undefined>()
+    const [modalProductVisible, setModalProductVisible] = useState(false)
 
     const [amount, setAmount] = useState('1')
 
@@ -47,7 +56,23 @@ export default function Order(){
         }
 
         loadInfo();
-    })
+    }, [])
+
+
+    useEffect(()=> {
+        async function loadProduct(){
+            const response = await api.get('/category/product', {
+                params: {
+                    category_id: categorySelected?.id
+                }
+            })
+
+            setProducts(response.data)
+            setProductSelected(response.data[0])
+        }
+
+        loadProduct()
+    }, [categorySelected])
 
     
     async function handleCloseOrder(){
@@ -84,16 +109,23 @@ export default function Order(){
             {
                 category.length !== 0 && (
                     <TouchableOpacity style={styles.input} onPress={() => setModalCategoryVIsible(true)}>
-                        <Text>
+                        <Text style={{color: '#fff'}}>
                             {categorySelected?.name}
                         </Text>
                     </TouchableOpacity>
                 )
             }
 
-            <TouchableOpacity style={styles.input}>
-                <Text>Pizza de calabresa</Text>
-            </TouchableOpacity>
+            
+            {
+                products.length !== 0 && (
+                    <TouchableOpacity style={styles.input}>
+                        <Text style={{color: '#fff'}}>
+                            {productSeleted?.name}
+                        </Text>
+                    </TouchableOpacity>
+                )
+            }
 
 
             <View style={styles.qtdContainer}>
