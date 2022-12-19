@@ -16,7 +16,8 @@ export default function Order(){
         <View style={styles.container}>
             <Text>Tela Order</Text>
             <Text>
-                {route.params.number
+                {
+                    route.params.number
                 }
             </Text>
         </View>
