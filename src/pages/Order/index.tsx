@@ -147,7 +147,10 @@ export default function Order(){
     }
 
     async function handleFinishOrder(){
-        navigation.navigate('FinishiOrder')
+        navigation.navigate('FinishiOrder', {
+            number: route.params?.number,
+            order_id: route.params?.order_id
+        })
     }
 
     return(
